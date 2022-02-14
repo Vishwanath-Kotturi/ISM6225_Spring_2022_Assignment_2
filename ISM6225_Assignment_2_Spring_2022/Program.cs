@@ -8,6 +8,7 @@ WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ISM6225_Assignment_2_Spring_2022
 {
@@ -16,9 +17,9 @@ namespace ISM6225_Assignment_2_Spring_2022
         static void Main(string[] args)
         {
 
-            //Question 1:
+            //  Question 1:
             Console.WriteLine("Question 1:");
-            int[] nums1 = { 0, 1, 2, 3, 12 };
+            int[] nums1 = { 1, 3, 5, 6 };
             Console.WriteLine("Enter the target number:");
             int target = Int32.Parse(Console.ReadLine());
             int pos = SearchInsert(nums1, target);
@@ -33,7 +34,7 @@ namespace ISM6225_Assignment_2_Spring_2022
             Console.WriteLine("Most frequent word is {0}:", commonWord);
             Console.WriteLine();
 
-            //Question 3:
+            // Question 3:
             Console.WriteLine("Question 3");
             int[] arr1 = { 2, 2, 3, 4 };
             int lucky_number = FindLucky(arr1);
@@ -50,15 +51,15 @@ namespace ISM6225_Assignment_2_Spring_2022
 
 
             //Question 5:
-            Console.WriteLine("Question 5");
-            string s = "ababcbacadefegdehijhklij";
-            List<int> part = PartitionLabels(s);
-            Console.WriteLine("Partation lengths are:");
-            for (int i = 0; i < part.Count; i++)
-            {
-                Console.Write(part[i] + "\t");
-            }
-            Console.WriteLine();
+            //Console.WriteLine("Question 5");
+            //string s = "ababcbacadefegdehijhklij";
+            //List<int> part = PartitionLabels(s);
+            //Console.WriteLine("Partation lengths are:");
+            //for (int i = 0; i < part.Count; i++)
+            //{
+            //    Console.Write(part[i] + "\t");
+            //}
+            //Console.WriteLine();
 
             //Question 6:
             Console.WriteLine("Question 6");
@@ -103,13 +104,13 @@ namespace ISM6225_Assignment_2_Spring_2022
 
             //Question 10:
             Console.WriteLine("Question 10");
-            string word1  = "horse";
+            string word1 = "horse";
             string word2 = "ros";
-            int minLen = MinDistance( word1,  word2);
+            int minLen = MinDistance(word1, word2);
             Console.WriteLine("Minimum number of operations required are {0}", minLen);
             Console.WriteLine();
         }
-    
+
 
         /*
         
@@ -133,7 +134,45 @@ namespace ISM6225_Assignment_2_Spring_2022
             try
             {
                 //Write your Code here.
-                return -1;
+                int l = 0, h;
+                h = nums.Length - 1;
+                int mid = 0;
+                if (target < nums[l])
+                    return 0;
+                else if (target > nums[h])
+                    return h + 1;
+                else
+                {
+
+
+
+                    for (int i = 0; i < nums.Length; i++)
+                    {
+                        mid = (h + l) / 2;
+
+                        if (target == nums[mid])
+                        {
+                            return mid;
+                        }
+                        if (target > nums[mid])
+                        {
+                            l = mid + 1;
+                        }
+                        if (target < nums[mid])
+                        {
+                            h = mid - 1;
+                        }
+                        //Console.WriteLine(mid);
+                        //Console.WriteLine(l);
+                        //Console.WriteLine(h);
+                        //Console.ReadKey();
+
+
+                    }
+                    return l + 1;
+                }
+
+
             }
             catch (Exception)
             {
@@ -163,10 +202,44 @@ namespace ISM6225_Assignment_2_Spring_2022
         {
             try
             {
-                
-                //write your code here.
 
-                return "";
+                //write your code here.
+                char[] split = new char[6] { '.', '?', ',', ' ', ';', '"' };
+                split[5] = Convert.ToChar("'");
+                string[] updatedstr = paragraph.ToLower().Split(split, StringSplitOptions.RemoveEmptyEntries);
+                IDictionary<string, int> numberNames = new Dictionary<string, int>();
+                foreach (var item in updatedstr)
+                {
+                    // Console.WriteLine(item);
+                    if (banned.Contains(item))
+                    {
+                        continue;
+                    }
+                    else if (numberNames.ContainsKey(item))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        int counter = 0;
+                        for (int i = 0; i < updatedstr.Length; i++)
+                        {
+                            if (updatedstr[i] == item)
+                            {
+                                counter++;
+                            }
+                        }
+                        numberNames.Add(item, counter);
+                    }
+                }
+                var reps = numberNames.Values.Max();
+
+
+                // Console.WriteLine(reps);
+                var myKey = numberNames.FirstOrDefault(x => x.Value == reps).Key;
+                // Console.WriteLine(myKey);
+                // Console.ReadKey();
+                return myKey;
             }
             catch (Exception)
             {
@@ -201,7 +274,36 @@ namespace ISM6225_Assignment_2_Spring_2022
             try
             {
                 //write your code here.
-                return 0;
+                IDictionary<int, int> numberNames = new Dictionary<int, int>();
+                foreach (var item in arr)
+                {
+                    int counter = 0;
+                    if (numberNames.ContainsKey(item))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < arr.Length; i++)
+                        {
+                            if (arr[i] == item)
+                            {
+                                counter++;
+                            }
+                        }
+                        numberNames.Add(item, counter);
+                    }
+                }
+                int maxval = -1;
+                foreach (KeyValuePair<int, int> j in numberNames)
+                {
+                    if (j.Value > maxval && j.Key == j.Value)
+                    {
+                        maxval = j.Value;
+                    }
+
+                }
+                return maxval;
             }
             catch (Exception)
             {
@@ -235,8 +337,51 @@ namespace ISM6225_Assignment_2_Spring_2022
         {
             try
             {
-                //write your code here.
-                return "";
+                int bulls = 0;
+                int cows = 0;
+                int leng = secret.Length;
+                IDictionary<char, int> numnames = new Dictionary<char, int>();
+                foreach (var item in secret)
+                {
+                    {
+                        if (numnames.ContainsKey(item))
+                        {
+                            numnames[item]++;
+                        }
+                        else
+                        {
+                            numnames.Add(item, 1);
+                        }
+                    }
+                }
+                for (int i = 0; i < leng; i++)
+                {
+                    char s = secret[i];
+                    char g = guess[i];
+                    if (s == g)
+                    {
+                        bulls++;
+                        numnames[s]--;
+                    }
+                }
+                for (int j = 0; j < leng; j++)
+                {
+                    char s = secret[j];
+                    char g = guess[j];
+                    if (s != g)
+                    {
+                        for (int k = 0; k < leng; k++)
+                        {
+                            g = guess[k];
+                            if (s == g && numnames[s] > 0)
+                            {
+                                cows++;
+                                numnames[s]--;
+                            }
+                        }
+                    }
+                }
+                return Convert.ToString(bulls) + 'A' + Convert.ToString(cows) + 'B';
             }
             catch (Exception)
             {
@@ -266,8 +411,33 @@ namespace ISM6225_Assignment_2_Spring_2022
             try
             {
                 //write your code here.
-                
-                return new List<int>() {} ;
+                char[] input = s.ToCharArray();
+                Dictionary<int, char> DataDictionary1 = new Dictionary<int, char>();
+                int[] position = new int[500];
+                for (int i = 0; i < input.Length; i++)
+                {
+                    DataDictionary1.Add(i, input[i]);
+                }
+
+                int left = 0, right = 0;
+                List<int> output = new List<int>();
+                while (left < input.Length)
+                {
+                    // right will be allocated to the latest entry of the first element.
+                    right = position[input[left]];
+                    for (int i = left; i < right; i++)
+                    {
+                        //updates right to the last element position of the first part.
+                        var myKey = DataDictionary1.FirstOrDefault(x => x.Value == input[i]).Key;
+                        Console.WriteLine(myKey);
+                        right = Math.Max(right, myKey);
+                    }
+                    //Adds the position of the last element to the list.
+                    output.Add(right - left + 1);
+                    //the position of left is updated to the next part.
+                    left = right + 1;
+                }
+                return output;
             }
             catch (Exception)
             {
@@ -306,13 +476,25 @@ namespace ISM6225_Assignment_2_Spring_2022
 
          */
 
-        public static List<int> NumberOfLines(int[] widths,string s)
+        public static List<int> NumberOfLines(int[] widths, string s)
         {
             try
             {
-                //write your code here.
+                int nolines = 1, initascii = 97;
+                //this is ascii of a;
+                int width = 0;
 
-                return new List<int>() { };
+                foreach (char c in s)
+                {
+                    width += widths[Convert.ToInt32(c) - initascii];
+
+                    if (width > 100)
+                    {
+                        nolines++;
+                        width = widths[Convert.ToInt32(c) - initascii];
+                    }
+                }
+                return new List<int>() { nolines, width };
             }
             catch (Exception)
             {
@@ -392,9 +574,25 @@ namespace ISM6225_Assignment_2_Spring_2022
         {
             try
             {
-                //write your code here.
+                string[] morsecode = new string[26] { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.." };
+                List<string> c = new List<string>();
+                string bl;
+                int initascii = 97, l = words.Length;
+                for (int i = 0; i < l; i++)
+                {
+                    bl = "";
+                    int lenword = words[i].Length;
+                    for (int j = 0; j < lenword; j++)
+                    {
 
-                return 0;
+                        bl += morsecode[Convert.ToInt32(words[i][j]) - initascii];
+                    }
+                    c.Add(bl);
+
+                }
+
+
+                return c.Distinct().Count();
             }
             catch (Exception)
             {
@@ -403,7 +601,7 @@ namespace ISM6225_Assignment_2_Spring_2022
 
         }
 
-      
+
 
 
         /*
